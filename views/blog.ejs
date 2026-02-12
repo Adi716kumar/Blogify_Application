@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head') %>
+    <title>Blog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+        .card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .card-img-top {
+            border-radius: 8px 8px 0 0;
+        }
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        .card-body {
+            padding: 20px;
+        }
+        pre {
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/nav') %>
+    <div class="container mt-4" style="position:absolute;display:flex;">
+        <img 
+  src="<%= blog.createdBy?.profileImageURL || '/images/default-user.png' %>" 
+  width="50px"
+/>
+
+<h4 style="margin-top:10px;margin-left:5px;">
+  <%= blog.createdBy?.fullName || "Unknown Author" %>
+</h4>
+
+    </div>
+
+    <div class="container mt-3">
+        <div class="card mb-3">
+            <% if(blog.coverImageURL){ %>
+                <img src="<%= blog.coverImageURL %>" class="card-img-top" alt="Cover Image">
+            <% } %>
+            <div class="card-body">
+                <h3 class="card-title"><%= blog.title %></h3>
+                <pre><%= blog.body %></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-3">
+        <h1>Comments</h1>
+       <% if (locals.comments) { %>
+        <% comments.forEach(function(comment) { %>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">
+  <%= comment.createdBy?.fullName || "Anonymous" %>
+</h5>
+                    <p class="card-text"><%= comment.content %></p>
+                </div>
+            </div>  
+       <% }) %>
+       <% } else { %>
+        <p>No comments yet. Be the first to comment!</p>    
+         <% } %>
+
+        <% if(locals.user) { %>
+        <form action="/blog/comment/<%= blog._id %>" method="post" class="bg-light p-4 rounded shadow mt-4">
+            <h5 class="fw-bold mb-3">Add a Comment</h5>
+            <div class="mb-3">
+            <label class="form-label">Comment</label>
+            <textarea name="content" class="form-control" rows="3" placeholder="Write your comment..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Post Comment</button>
+        </form>
+        <% } %>
+    </div>
+    <%- include('partials/scripts') %>
+</body>
+</html>

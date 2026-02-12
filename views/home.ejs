@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head') %>
+    <title>Home</title>
+    <style>
+        :root{
+            --bg1: #0f172a;
+            --bg2: #0b1220;
+            --accent1: #7c3aed;
+            --accent2: #06b6d4;
+            --glass: rgba(255,255,255,0.06);
+            --muted: rgba(255,255,255,0.7);
+        }
+
+        html,body{
+            height:100%;
+            background: linear-gradient(135deg,var(--bg1) 0%, var(--bg2) 60%);
+            color: #eef2ff;
+            font-family: Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+        }
+
+        .page-wrap{
+            min-height:100vh;
+            padding:48px 0;
+            display:flex;
+            flex-direction:column;
+            gap:28px;
+        }
+
+        .hero{
+            max-width:1100px;
+            margin:0 auto;
+            display:flex;
+            align-items:center;
+            gap:20px;
+            padding:22px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            border-radius:14px;
+            box-shadow: 0 6px 30px rgba(2,6,23,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .hero h1{
+            margin:0;
+            font-size:28px;
+            letter-spacing: -0.02em;
+            color: #fff;
+        }
+
+        .controls{
+            margin-left:auto;
+            display:flex;
+            gap:12px;
+            align-items:center;
+        }
+
+        .search{
+            display:flex;
+            align-items:center;
+            gap:8px;
+            background: var(--glass);
+            padding:8px 12px;
+            border-radius:10px;
+            border:1px solid rgba(255,255,255,0.03);
+        }
+        .search input{
+            background:transparent;
+            border:0;
+            outline:none;
+            color:var(--muted);
+            min-width:220px;
+        }
+
+        .grid{
+            max-width:1100px;
+            margin:0 auto;
+            display:grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap:20px;
+        }
+
+        .card{
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            border-radius:12px;
+            overflow:hidden;
+            border:1px solid rgba(255,255,255,0.035);
+            transform: translateY(14px) scale(.995);
+            opacity:0;
+            transition: all 380ms cubic-bezier(.2,.9,.28,1);
+            box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+            display:flex;
+            flex-direction:column;
+            min-height:220px;
+        }
+
+        .card.visible{
+            transform: none;
+            opacity:1;
+        }
+
+        .card:hover{
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: 0 18px 40px rgba(2,6,23,0.75);
+        }
+
+        .card-img-top{
+            width:100%;
+            height:160px;
+            object-fit:cover;
+            display:block;
+            transition: transform 420ms ease;
+        }
+        .card:hover .card-img-top{
+            transform: scale(1.05);
+        }
+
+        .card-body{
+            padding:16px;
+            display:flex;
+            flex-direction:column;
+            gap:10px;
+            flex:1;
+        }
+
+        .card-title{
+            margin:0;
+            font-weight:700;
+            font-size:18px;
+            color:#fff;
+        }
+
+        .meta{
+            display:flex;
+            gap:8px;
+            align-items:center;
+            color:var(--muted);
+            font-size:13px;
+        }
+
+        .excerpt{
+            color: #dbeafe;
+            opacity:0.9;
+            font-size:14px;
+            line-height:1.5;
+            flex:1;
+            margin-top:6px;
+        }
+
+        .btn-cta{
+            display:inline-flex;
+            gap:8px;
+            align-items:center;
+            background: linear-gradient(90deg,var(--accent1),var(--accent2));
+            color:white;
+            padding:8px 12px;
+            border-radius:10px;
+            text-decoration:none;
+            border:0;
+            font-weight:600;
+            transition: transform 180ms ease, box-shadow 180ms ease;
+            box-shadow: 0 8px 20px rgba(124,58,237,0.22);
+        }
+        .btn-cta:hover{ transform: translateY(-3px); box-shadow: 0 18px 40px rgba(6,182,212,0.12); }
+
+        .badge-author{
+            background: rgba(255,255,255,0.03);
+            border-radius:999px;
+            padding:6px 10px;
+            font-size:12px;
+            color:var(--muted);
+            border:1px solid rgba(255,255,255,0.02);
+        }
+
+        /* empty state */
+        .empty-state{
+            max-width:1100px;
+            margin:0 auto;
+            padding:28px;
+            border-radius:12px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            text-align:center;
+            color:var(--muted);
+            border:1px dashed rgba(255,255,255,0.03);
+        }
+
+        /* small screens adjustments */
+        @media (max-width:560px){
+            .hero{ flex-direction:column; align-items:flex-start; gap:12px; }
+            .controls{ margin-left:0; width:100%; justify-content:space-between; }
+            .search input{ min-width:120px; }
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/nav') %>
+
+    <div class="page-wrap">
+        <div class="hero">
+            <div>
+                <h1>Recent Blogs</h1>
+                <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+                    Fresh posts, creative ideas and stories — discover what's new.
+                </p>
+            </div>
+
+            <div class="controls">
+                <div class="search" role="search" aria-label="Filter blogs">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color:var(--muted)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M21 21l-4.35-4.35"/><circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="1.6"/></svg>
+                    <input id="search" type="search" placeholder="Search by title, body or author..." autocomplete="off">
+                </div>
+                <a href="/blog/add-new" class="btn-cta" title="Add a new blog">+ Add Blog</a>
+            </div>
+        </div>
+
+        <% if(blogs.length === 0){ %>
+            <div class="empty-state">
+                <h3 style="margin:0 0 8px; color:#fff;">No blogs yet</h3>
+                <p style="margin:0 0 12px;">Be the first to share—your thoughts could inspire someone.</p>
+                <a href="/blog/add-new" class="btn-cta">Create your first post</a>
+            </div>
+        <% } else { %>
+            <div class="grid" id="blogsGrid">
+                <% blogs.forEach(function(blog){ %>
+                    <article class="card" data-id="<%= blog._id %>">
+                        <% if(blog.coverImageURL){ %>
+                            <img src="<%= blog.coverImageURL %>" class="card-img-top" alt="Cover Image">
+                        <% } else { %>
+                            <div style="height:160px; display:flex; align-items:center; justify-content:center; background:linear-gradient(90deg, rgba(124,58,237,0.18), rgba(6,182,212,0.12)); color:white; font-weight:700;">
+                                <span style="font-size:40px; opacity:0.95;">✦</span>
+                            </div>
+                        <% } %>
+
+                        <div class="card-body">
+                            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+                                <h3 class="card-title"><a href="/blog/<%= blog._id %>" style="color:inherit; text-decoration:none;"><%= blog.title %></a></h3>
+                              <span class="badge-author">By <%= blog.createdBy?.fullName || "Unknown" %></span>
+                            </div>
+
+                            <div class="meta">
+                                <small style="color:var(--muted);"> <%= blog.createdAt.toDateString() %> </small>
+                            </div>
+
+                            <p class="excerpt"><%= blog.body.substring(0, 200) %>...</p>
+
+                            <div style="display:flex; gap:12px; align-items:center; margin-top:8px;">
+                                <a href="/blog/<%= blog._id %>" class="btn-cta">Read More</a>
+                                <span style="font-size:12px; color:var(--muted);"> · estimated 3 min read</span>
+                            </div>
+                        </div>
+                    </article>
+                <% }) %>
+            </div>
+        <% } %>
+    </div>
+
+   <%- include('partials/scripts') %>
+
+   <script>
+       // simple client-side filter and reveal-on-scroll
+       (function(){
+           const search = document.getElementById('search');
+           const cards = Array.from(document.querySelectorAll('.card'));
+
+           function filter(q){
+               q = (q||'').toLowerCase().trim();
+               cards.forEach(card => {
+                   const title = (card.querySelector('.card-title')?.innerText || '').toLowerCase();
+                   const excerpt = (card.querySelector('.excerpt')?.innerText || '').toLowerCase();
+                   const author = (card.querySelector('.badge-author')?.innerText || '').toLowerCase();
+                   const match = !q || title.includes(q) || excerpt.includes(q) || author.includes(q);
+                   card.style.display = match ? '' : 'none';
+               });
+           }
+
+           search.addEventListener('input', (e)=> filter(e.target.value));
+
+           // reveal on scroll
+           const io = new IntersectionObserver(entries => {
+               entries.forEach(entry => {
+                   if(entry.isIntersecting){
+                       entry.target.classList.add('visible');
+                       io.unobserve(entry.target);
+                   }
+               });
+           }, {threshold: 0.12});
+
+           cards.forEach(c => io.observe(c));
+       })();
+   </script>
+</body>
+</html></div>

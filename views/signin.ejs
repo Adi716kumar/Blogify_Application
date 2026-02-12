@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%-include('partials/head') %>
+    <title>User |Signin</title>
+</head>
+<body>
+    <%-include('partials/nav') %>
+
+    <div class="conatiner">
+        <form action = "/user/signin" method = "post" class="bg-light p-4 rounded shadow">
+  <h4 class="fw-bold mb-3 text-center">Sign In</h4>
+
+  <div class="mb-3">
+    <label class="form-label">Email Address</label>
+    <input name= "email" type="email" class="form-control" placeholder="Enter your email" required>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Password</label>
+    <input name= "password" type="password" class="form-control" placeholder="Create a password" required>
+  </div>
+
+  <button name="submit" type="submit" class="btn btn-dark w-100">Sign In</button>
+</form>
+
+    </div>
+   <%-include('partials/scripts') %>
+</body>
+</html>
