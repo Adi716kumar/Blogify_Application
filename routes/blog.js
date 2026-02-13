@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const multer = require("multer");
-const path = require("path");
+// const path = require("path");
 
 const router = Router();
 const User = require("../model/users");
@@ -8,16 +8,20 @@ const Blog = require("../model/blog");
 const Comment = require("../model/comment");
 
 /* Multer Storage Configuration */
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "../public/uploads"));
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname);
+const multer = require("multer");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("../config/cloudinary");
+
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "blogs",
+    allowed_formats: ["jpg", "png", "jpeg", "webp"],
   },
 });
 
 const upload = multer({ storage });
+
 
 /* Add New Blog Page */
 router.get("/add-new", (req, res) => {
@@ -54,14 +58,26 @@ router.post("/comment/:blogId", async (req, res) => {
 
 /* Create Blog */
 router.post("/", upload.single("coverImage"), async (req, res) => {
-  const { title, body } = req.body;
-  const blog = await Blog.create({
-	title,
-	body,
-	createdBy: req.user.id,
-	coverImageURL: `/uploads/${req.file.filename}`,
-  });
-  return res.redirect(`/blog/${blog._id}`);
+  try {
+    const { title, body } = req.body;
+
+    if (!req.file) {
+      return res.status(400).send("Image upload failed");
+    }
+
+    const blog = await Blog.create({
+      title,
+      body,
+      createdBy: req.user.id,
+      coverImageURL: req.file.path, // Cloudinary URL
+    });
+
+    return res.redirect(`/blog/${blog._id}`);
+  } catch (err) {
+    console.error("BLOG CREATE ERROR:", err);
+    res.status(500).send("Internal Server Error");
+  }
 });
+
 
 module.exports = router;
