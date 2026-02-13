@@ -5,6 +5,7 @@ const path = require("path");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 
+
 const router = require("./routes/user");
 const blogRoute = require("./routes/blog");
 const Blog = require("./model/blog");
@@ -29,7 +30,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(checkForAuthenticationCookie("token"));
-app.use(express.static(path.resolve("./public")));
+// app.use(express.static(path.resolve("./public")));
+app.use(express.static(path.join(__dirname, "public")));
+
 
 // ---------- Routes ----------
 app.get("/", async (req, res) => {
