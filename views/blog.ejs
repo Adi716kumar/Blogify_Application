@@ -27,9 +27,12 @@
             font-size: 1.5rem;
             margin-bottom: 10px;
         }
-        .card-body {
+        .blog-body {
+            white-space: pre-wrap;  
+            word-wrap: break-word;   
+            overflow-x: hidden;      
             padding: 20px;
-        }
+}
         pre {
             background-color: #e9ecef;
             padding: 10px;
@@ -47,7 +50,7 @@
 />
 
 <h4 style="margin-top:10px;margin-left:5px;">
-  <%= blog.createdBy?.fullName || "Unknown Author" %>
+  <%= blog.authorSnapshot?.name || "Unknown Author" %>
 </h4>
 
     </div>
@@ -60,9 +63,19 @@
             <div class="card-body">
                 <h3 class="card-title"><%= blog.title %></h3>
                 <pre><%= blog.body %></pre>
+                 <% if (user && blog.createdBy && user.id === blog.createdBy._id.toString()) { %>
+                    <form action="/blog/delete/<%= blog._id %>" method="POST" style="margin-top: 20px;">
+                        <button type="submit" class="btn btn-primary">
+                        Delete Blog
+                        </button>
+                    </form>
+                    <% } %>
             </div>
         </div>
     </div>
+
+   
+
 
     <div class="container mt-3">
         <h1>Comments</h1>
@@ -71,7 +84,7 @@
             <div class="card mb-3">
                 <div class="card-body">
                     <h5 class="card-title">
-  <%= comment.createdBy?.fullName || "Anonymous" %>
+  <%= comment.authorSnapshot?.name || "Anonymous" %>
 </h5>
                     <p class="card-text"><%= comment.content %></p>
                 </div>

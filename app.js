@@ -12,7 +12,7 @@ const { checkForAuthenticationCookie } = require("./middlewares/authentication")
 
 
 const app = express();
-const PORT = process.env.PORT ||3000;// here we are choosing our own port but, when we are hosting somewhere that port me not be available
+const PORT = process.env.PORT;// here we are choosing our own port but, when we are hosting somewhere that port me not be available
 
 // //^connecting mongodb
 // mongoose.connect("mongodb://127.0.0.1:27017/blogify").then( _ => console.log('MongoDb Connected')

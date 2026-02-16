@@ -1,4 +1,4 @@
-const { Schema, model } = require("mongoose");
+const { Schema, model, mongoose } = require("mongoose");
 
 const blogSchema  = new Schema({
     title: {
@@ -18,6 +18,18 @@ const blogSchema  = new Schema({
         ref: "user",
         required: true
     },
+    authorSnapshot: {
+        id: {
+            type: Schema.Types.ObjectId
+        },
+        name: {
+            type: String,
+            required: true
+        },
+        email: {
+            type: String
+        }
+     }
 },
 {timestamps: true}
 );

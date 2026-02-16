@@ -49,6 +49,11 @@ router.post("/comment/:blogId", async (req, res) => {
 	content: req.body.content,
 	blogId: req.params.blogId,
 	createdBy: req.user.id,
+  authorSnapshot: {
+      id: req.user.id,
+      name: req.user.name,
+      email: req.user.email
+    },
   });
   return res.redirect(`/blog/${req.params.blogId}`);
 });
@@ -61,8 +66,36 @@ router.post("/", upload.single("coverImage"), async (req, res) => {
 	body,
 	createdBy: req.user.id,
 	coverImageURL: `/uploads/${req.file.filename}`,
+   authorSnapshot: {
+      id: req.user.id,
+      name: req.user.name,
+      email: req.user.email
+    },
   });
   return res.redirect(`/blog/${blog._id}`);
+});
+
+//delete blog
+router.post("/delete/:id", async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+
+    if (!blog) {
+      return res.redirect("/");
+    }
+
+    // Authorization check
+    if (blog.createdBy._id.toString() !== req.user.id) {
+      return res.status(403).send("Unauthorized");
+    }
+    await Comment.deleteMany({ blogId: req.params.id });
+    await Blog.findByIdAndDelete(req.params.id);
+    
+    return res.redirect("/");
+  } catch (error) {
+    console.log(error);
+    return res.redirect("/");
+  }
 });
 
 module.exports = router;

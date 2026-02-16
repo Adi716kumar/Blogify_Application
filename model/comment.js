@@ -14,6 +14,18 @@ const commentSchema = new Schema({
         ref: "user",
         required: true
     },
+    authorSnapshot: {
+        id: {
+            type: Schema.Types.ObjectId
+        },
+        name: {
+            type: String,
+            required: true
+        },
+        email: {
+            type: String
+        }
+        },
 }, {timestamps: true});
 
 const Comment = model("comment", commentSchema);
