@@ -24,6 +24,10 @@ const commentSchema = new Schema({
         },
         email: {
             type: String
+        },
+        profileImageURL: {
+            type: String,
+            required: true
         }
         },
 }, {timestamps: true});

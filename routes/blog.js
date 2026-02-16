@@ -45,21 +45,24 @@ router.post("/comment/:blogId", async (req, res) => {
     return res.status(401).send("Login required");
   }
 
-  await Comment.create({
+  const comment = await Comment.create({
 	content: req.body.content,
 	blogId: req.params.blogId,
 	createdBy: req.user.id,
   authorSnapshot: {
       id: req.user.id,
       name: req.user.name,
-      email: req.user.email
+      email: req.user.email,
+      profileImageURL: req.user.profileImageURL,
     },
   });
+  console.log(comment);
+
   return res.redirect(`/blog/${req.params.blogId}`);
 });
 
 /* Create Blog */
-router.post("/", upload.single("coverImage"), async (req, res) => {
+router.post("/create-blog", upload.single("coverImage"), async (req, res) => {
   const { title, body } = req.body;
   const blog = await Blog.create({
 	title,

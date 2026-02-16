@@ -9,6 +9,23 @@
             background-color: #f8f9fa;
             color: #333;
         }
+        .profile-img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #374151;
+        }
+
+       .comment-img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #e5e7eb;
+            margin-right: 8px;
+            }
+
         .container {
             max-width: 800px;
             margin: auto;
@@ -18,10 +35,13 @@
             border: none;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
         .card-img-top {
             border-radius: 8px 8px 0 0;
+        }
+        .card-text {
+            margin-left: 45px;
         }
         .card-title {
             font-size: 1.5rem;
@@ -45,8 +65,8 @@
     <%- include('partials/nav') %>
     <div class="container mt-4" style="position:absolute;display:flex;">
         <img 
-  src="<%= blog.createdBy?.profileImageURL || '/images/default-user.png' %>" 
-  width="50px"
+  src="<%= blog.createdBy?.profileImageURL || '/images/default.png' %>" 
+  class="profile-img"
 />
 
 <h4 style="margin-top:10px;margin-left:5px;">
@@ -83,9 +103,8 @@
         <% comments.forEach(function(comment) { %>
             <div class="card mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">
-  <%= comment.authorSnapshot?.name || "Anonymous" %>
-</h5>
+                    <img src="<%= comment.authorSnapshot.profileImageURL || '/images/default.png'%>" class="comment-img">
+                    <strong ><%= comment.authorSnapshot.name %></strong>
                     <p class="card-text"><%= comment.content %></p>
                 </div>
             </div>  

@@ -8,8 +8,14 @@
     <%-include('partials/nav') %>
 
     <div class="conatiner">
-        <form action = "/user/signup" method = "post" class="bg-light p-4 rounded shadow">
+        <form action = "/user/signup" method = "post" enctype="multipart/form-data" class="bg-light p-4 rounded shadow">
   <h4 class="fw-bold mb-3 text-center">Create Account</h4>
+
+  <div class="mb-3">
+                <label for="profileImage" class="form-label">
+                Profile Image</label>
+                <input type="file" class="form-control" id="profileImage" name="profileImage">
+            </div>
 
   <div class="mb-3">
     <label class="form-label">Full Name</label>
