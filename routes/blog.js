@@ -39,6 +39,17 @@ router.get("/:id", async (req, res) => {
   });
 });
 
+//edit blog get request
+router.get("/edit/:id", async (req, res) => {
+  const blog = await Blog.findById(req.params.id);
+
+  if (!req.user || blog.createdBy.toString() !== req.user.id)
+    return res.redirect("/");
+
+  res.render("edit-blog", { blog, user: req.user });
+});
+
+
 /* Add Comment */
 router.post("/comment/:blogId", async (req, res) => {
   if (!req.user) {
@@ -100,5 +111,20 @@ router.post("/delete/:id", async (req, res) => {
     return res.redirect("/");
   }
 });
+
+//edit blog
+router.post("/edit/:id", async (req, res) => {
+  
+  const blog = await Blog.findById(req.params.id);
+  if (!req.user || blog.createdBy.toString() !== req.user.id)
+    return res.redirect("/");
+
+  blog.title = req.body.title;
+  blog.body = req.body.body;
+  await blog.save();
+
+  res.redirect(`/blog/${blog._id}`);
+});
+
 
 module.exports = router;
