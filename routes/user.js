@@ -1,21 +1,23 @@
 const express = require("express")
 const router = express.Router();
 const User = require('../model/users.js')
-const multer = require("multer");
-const path = require("path");
+const upload = require("../middlewares/upload");
 
-/* Multer Storage Configuration */
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.resolve("./public/uploads/"));
-  },
-  filename: function (req, file, cb) {
-    const fileName = `${Date.now()}-${file.originalname}`;
-    cb(null, fileName);
-  },
-});
+// const multer = require("multer");
+// const path = require("path");
 
-const upload = multer({ storage });
+// /* Multer Storage Configuration */
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, path.resolve("./public/uploads/"));
+//   },
+//   filename: function (req, file, cb) {
+//     const fileName = `${Date.now()}-${file.originalname}`;
+//     cb(null, fileName);
+//   },
+// });
+
+// const upload = multer({ storage });
 
 
 router.get('/signin',(req,res)=>{
@@ -41,20 +43,27 @@ router.get('/logout', (req, res) => {
     res.clearCookie("token").redirect("/");
 });
 
-router.post('/signup',upload.single("profileImage"), async(req,res)=>{
-    const {fullName, email, password} = req.body;
-    console.log(req.file);
-    await User.create({
+router.post(
+  "/signup",
+  upload.single("profileImage"),
+  async (req, res) => {
+    try {
+      const { fullName, email, password } = req.body;
+
+      await User.create({
         fullName,
         email,
         password,
-        profileImageURL : req.file
-    ? `/uploads/${req.file.filename}`
-    : "/images/default.png",
-    });
-    return res.redirect("/")
-})
+        profileImageURL: req.file ? req.file.path : "/images/default.png",
+      });
 
+      return res.redirect("/user/signin"); // ✅ IMPORTANT
+    } catch (err) {
+      // console.error(err);
+      return res.status(500).send("Signup failed");
+    }
+  }
+);
 
 
 module.exports = router;

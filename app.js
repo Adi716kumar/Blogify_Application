@@ -30,6 +30,10 @@ app.use(cookieParser());
 app.use(checkForAuthenticationCookie("token"));
 app.use(express.static(path.resolve('./public')));
 
+
+app.use('/user',router);
+app.use('/blog', blogRoute);
+
 app.get('/',async(req,res)=>{
     console.log("User object:", req.user);
     const allBlogs = await Blog.find().populate('createdBy').sort({createdAt: -1});
@@ -39,8 +43,14 @@ app.get('/',async(req,res)=>{
     });
 })
 
-app.use('/user',router);
-app.use('/blog', blogRoute);
+app.use((err, req, res, next) => {
+  console.error("🔥 ERROR NAME:", err.name);
+  console.error("🔥 ERROR MESSAGE:", err.message);
+  console.error("🔥 FULL ERROR:", err);
+
+  return res.status(500).send(err.message || "Upload failed");
+});
+
 
 app.listen(PORT, ()=>{
     console.log(`Server started at PORT: ${PORT}`);

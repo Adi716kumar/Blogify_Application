@@ -1,24 +1,25 @@
 const { Router } = require("express");
-const multer = require("multer");
-const path = require("path");
+// const multer = require("multer");
+// const path = require("path");
+const upload = require("../middlewares/upload");
 
 const router = Router();
 const User = require("../model/users");
 const Blog = require("../model/blog");
 const Comment = require("../model/comment");
 
-/* Multer Storage Configuration */
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-	cb(null, path.resolve("./public/uploads/"));
-  },
-  filename: function (req, file, cb) {
-	const fileName = `${Date.now()}-${file.originalname}`;
-	cb(null, fileName);
-  },
-});
+// /* Multer Storage Configuration */
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+// 	cb(null, path.resolve("./public/uploads/"));
+//   },
+//   filename: function (req, file, cb) {
+// 	const fileName = `${Date.now()}-${file.originalname}`;
+// 	cb(null, fileName);
+//   },
+// });
 
-const upload = multer({ storage });
+// const upload = multer({ storage });
 
 /* Add New Blog Page */
 router.get("/add-new", (req, res) => {
@@ -67,7 +68,7 @@ router.post("/comment/:blogId", async (req, res) => {
       profileImageURL: req.user.profileImageURL,
     },
   });
-  console.log(comment);
+  // console.log(comment);
 
   return res.redirect(`/blog/${req.params.blogId}`);
 });
@@ -79,7 +80,7 @@ router.post("/create-blog", upload.single("coverImage"), async (req, res) => {
 	title,
 	body,
 	createdBy: req.user.id,
-	coverImageURL: `/uploads/${req.file.filename}`,
+	coverImageURL: req.file ? req.file.path : null,
    authorSnapshot: {
       id: req.user.id,
       name: req.user.name,
@@ -107,7 +108,7 @@ router.post("/delete/:id", async (req, res) => {
     
     return res.redirect("/");
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return res.redirect("/");
   }
 });
