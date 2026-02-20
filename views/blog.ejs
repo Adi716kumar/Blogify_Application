@@ -228,7 +228,9 @@
             <% } %>
             <div class="card-body">
                 <h3 class="card-title"><%= blog.title %></h3>
-                <pre><%= blog.body %></pre>
+                 <article>
+                <p><%= blog.body %></p>
+                 </article>
                  <% if (user && blog.createdBy && user.id === blog.createdBy._id.toString()) { %>
                     <div class="blog-actions">
   <form action="/blog/delete/<%= blog._id %>" method="POST">
