@@ -2,11 +2,15 @@ const { Router } = require("express");
 // const multer = require("multer");
 // const path = require("path");
 const upload = require("../middlewares/upload");
+require("dotenv").config();
+const { GoogleGenAI } = require("@google/genai");
 
 const router = Router();
 const User = require("../model/users");
 const Blog = require("../model/blog");
 const Comment = require("../model/comment");
+const genAI = new GoogleGenAI(process.env.GEMINI_API_KEY);
+// console.log("Gemini key: ",process.env.GEMINI_API_KEY)
 
 // /* Multer Storage Configuration */
 // const storage = multer.diskStorage({
@@ -127,5 +131,58 @@ router.post("/edit/:id", async (req, res) => {
   res.redirect(`/blog/${blog._id}`);
 });
 
+//generate summary
+router.post("/generate-summary/:id", async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+
+    if (!blog) {
+      return res.status(404).send("Blog not found");
+    }
+
+   if (blog.summary) {
+        return res.json({ summary: blog.summary });
+      }
+
+
+    //prompt
+    const prompt = `
+                  You are a professional content editor.
+
+                  Read the blog post carefully and identify the language of the content.
+
+                  Generate a 5-6 sentence summary in the SAME language as the original blog.
+
+                  Guidelines:
+                  - Do not translate the language.
+                  - Keep the tone professional and clear.
+                  - Preserve the main idea and key insights.
+                  - Do not add new information.
+                  - Do not use introductory phrases like "Here is the summary".
+                  - Keep it under 120 words.
+
+                  Blog Content:
+                  ${blog.body}
+                  `;
+
+    const response = await genAI.models.generateContent({
+      model: "gemini-2.5-flash-lite",
+      contents: prompt,
+      generationConfig: {
+        maxOutputTokens: 200,
+        temperature: 0.3,
+      },
+    });
+
+    blog.summary = response.text;
+    await blog.save();
+
+    return res.json({ summary: blog.summary });
+  } 
+  catch (error) {
+    console.error(error);
+    res.status(500).send("Error generating summary");
+  }
+});
 
 module.exports = router;

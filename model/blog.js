@@ -29,6 +29,10 @@ const blogSchema  = new Schema({
         email: {
             type: String
         }
+     },
+     summary: {
+        type: String,
+        default: "",
      }
 },
 {timestamps: true}
