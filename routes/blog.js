@@ -153,6 +153,8 @@ router.post("/generate-summary/:id", async (req, res) => {
 
                   Generate a 5-6 sentence summary in the SAME language as the original blog.
 
+                  Do not mention explicitly in the blog about the language used.
+
                   Guidelines:
                   - Do not translate the language.
                   - Keep the tone professional and clear.
@@ -160,6 +162,7 @@ router.post("/generate-summary/:id", async (req, res) => {
                   - Do not add new information.
                   - Do not use introductory phrases like "Here is the summary".
                   - Keep it under 120 words.
+                  - If there are some random or meaningless words or sentence like "bdchihuvhrv vbibrv" return summary can't be generated.
 
                   Blog Content:
                   ${blog.body}
