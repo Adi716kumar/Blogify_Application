@@ -35,7 +35,9 @@ app.use('/user',router);
 app.use('/blog', blogRoute);
 
 app.get('/',async(req,res)=>{
-    console.log("User object:", req.user);
+    // console.log("User object:", req.user);
+   
+console.log("Old blogs updated successfully");
     const allBlogs = await Blog.find().populate('createdBy').sort({createdAt: -1});
     return res.render('home', {
         user: req.user,

@@ -18,6 +18,10 @@ const blogSchema  = new Schema({
         ref: "user",
         required: true
     },
+    isEdited : {
+        type: Boolean,
+        default: false,
+    },
     authorSnapshot: {
         id: {
             type: Schema.Types.ObjectId

@@ -117,6 +117,7 @@ router.post("/delete/:id", async (req, res) => {
   }
 });
 
+
 //edit blog
 router.post("/edit/:id", async (req, res) => {
   
@@ -126,12 +127,15 @@ router.post("/edit/:id", async (req, res) => {
 
   blog.title = req.body.title;
   blog.body = req.body.body;
+  blog.isEdited = true;
   await blog.save();
 
   res.redirect(`/blog/${blog._id}`);
 });
 
-//generate summary
+
+
+// generate summary
 router.post("/generate-summary/:id", async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id);
@@ -140,33 +144,37 @@ router.post("/generate-summary/:id", async (req, res) => {
       return res.status(404).send("Blog not found");
     }
 
-   if (blog.summary) {
-        return res.json({ summary: blog.summary });
-      }
+    // If summary exists AND blog not edited → return old summary
+    if (
+      blog.summary &&
+      blog.summary !== "Summary can't be generated." &&
+      blog.isEdited === false
+    ) {
+      return res.json({ summary: blog.summary });
+    }
 
-
-    //prompt
+    // Generate new summary
     const prompt = `
-                  You are a professional content editor.
+    You are a professional content editor.
 
-                  Read the blog post carefully and identify the language of the content.
+    Read the blog post carefully and identify the language of the content.
 
-                  Generate a 5-6 sentence summary in the SAME language as the original blog.
+    Generate a 5-6 sentence summary in the SAME language as the original blog.
 
-                  Do not mention explicitly in the blog about the language used.
+    Do not mention explicitly in the blog about the language used.
 
-                  Guidelines:
-                  - Do not translate the language.
-                  - Keep the tone professional and clear.
-                  - Preserve the main idea and key insights.
-                  - Do not add new information.
-                  - Do not use introductory phrases like "Here is the summary".
-                  - Keep it under 120 words.
-                  - If there are some random or meaningless words or sentence like "bdchihuvhrv vbibrv" return summary can't be generated.
+    Guidelines:
+    - Do not translate the language.
+    - Keep the tone professional and clear.
+    - Preserve the main idea and key insights.
+    - Do not add new information.
+    - Do not use introductory phrases like "Here is the summary".
+    - Keep it under 120 words.
+    - If there are some random or meaningless words like "bdchihuvhrv vbibrv" return "Summary can't be generated".
 
-                  Blog Content:
-                  ${blog.body}
-                  `;
+    Blog Content:
+    ${blog.body}
+    `;
 
     const response = await genAI.models.generateContent({
       model: "gemini-2.5-flash-lite",
@@ -178,11 +186,12 @@ router.post("/generate-summary/:id", async (req, res) => {
     });
 
     blog.summary = response.text;
+    blog.isEdited = false;  // reset after regeneration
     await blog.save();
 
     return res.json({ summary: blog.summary });
-  } 
-  catch (error) {
+
+  } catch (error) {
     console.error(error);
     res.status(500).send("Error generating summary");
   }
