@@ -2,8 +2,11 @@ require("dotenv").config();
 
 const express = require("express");
 const path = require('path')
-const router = require('./routes/user')
+
+const userRoute = require('./routes/user')
 const blogRoute = require("./routes/blog");
+const adminRoutes = require("./routes/admin");
+
 const mongoose = require("mongoose");
 const cookieParser = require('cookie-parser');
 const Blog = require("./model/blog");
@@ -31,13 +34,14 @@ app.use(checkForAuthenticationCookie("token"));
 app.use(express.static(path.resolve('./public')));
 
 
-app.use('/user',router);
+app.use('/user', userRoute);
 app.use('/blog', blogRoute);
+app.use("/admin", adminRoutes);
+
 
 app.get('/',async(req,res)=>{
-    // console.log("User object:", req.user);
-   
-console.log("Old blogs updated successfully");
+    console.log(req.user);
+    
     const allBlogs = await Blog.find().populate('createdBy').sort({createdAt: -1});
     return res.render('home', {
         user: req.user,
