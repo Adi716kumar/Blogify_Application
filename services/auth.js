@@ -1,6 +1,9 @@
 const JWT = require('jsonwebtoken')
 
-const secret = 'aditya786';
+// Falls back to the old hardcoded value so existing logged-in users aren't
+// signed out. Set JWT_SECRET in your environment (Render dashboard) and this
+// will pick it up automatically going forward.
+const secret = process.env.JWT_SECRET || 'aditya786';
 
 function createTokenForUser(user){
     const payload = {

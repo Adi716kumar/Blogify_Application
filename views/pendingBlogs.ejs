@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head') %>
+    <meta charset="UTF-8">
+    <title>Pending Blogs - Admin</title>
+
+    <style>
+        :root{
+            --bg1: #0f172a;
+            --bg2: #0b1220;
+            --accent1: #7c3aed;
+            --accent2: #06b6d4;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --glass: rgba(255,255,255,0.06);
+            --muted: rgba(255,255,255,0.7);
+        }
+
+        body{
+            background: linear-gradient(135deg,var(--bg1), var(--bg2));
+            color: #eef2ff;
+            font-family: Inter, sans-serif;
+            margin:0;
+        }
+
+        .container{
+            width:80%;
+            margin:40px auto;
+        }
+
+        h1{
+            margin-bottom:8px;
+        }
+
+        .subtitle{
+            color:var(--muted);
+            margin-bottom:30px;
+            font-size:14px;
+        }
+
+        .blog-card{
+            background: rgba(255,255,255,0.03);
+            padding:20px 22px;
+            border-radius:12px;
+            margin-bottom:16px;
+            border:1px solid rgba(255,255,255,0.05);
+            transition:0.3s;
+        }
+
+        .blog-card:hover{
+            border-color: var(--accent2);
+            box-shadow: 0 8px 25px rgba(6,182,212,0.15);
+        }
+
+        .blog-top{
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            gap:16px;
+            flex-wrap:wrap;
+        }
+
+        .blog-title{
+            font-size:18px;
+            font-weight:600;
+        }
+
+        .blog-title a{
+            color:inherit;
+            text-decoration:none;
+        }
+
+        .blog-title a:hover{
+            color: var(--accent2);
+        }
+
+        .blog-author{
+            font-size:14px;
+            color:var(--muted);
+            margin-top:4px;
+        }
+
+        .moderation-info{
+            margin-top:12px;
+            padding:12px 14px;
+            background: rgba(255,255,255,0.03);
+            border-radius:8px;
+            font-size:13px;
+            color: var(--muted);
+            display:flex;
+            gap:18px;
+            flex-wrap:wrap;
+        }
+
+        .moderation-info span strong{
+            color:#eef2ff;
+        }
+
+        .badge{
+            display:inline-block;
+            padding:3px 10px;
+            border-radius:999px;
+            font-size:12px;
+            font-weight:600;
+            background: rgba(234,179,8,0.15);
+            color:#facc15;
+            border:1px solid rgba(234,179,8,0.3);
+        }
+
+        .actions{
+            display:flex;
+            gap:10px;
+            margin-top:16px;
+        }
+
+        .btn{
+            border:none;
+            padding:9px 18px;
+            border-radius:8px;
+            cursor:pointer;
+            font-weight:600;
+            font-size:14px;
+            transition:0.2s;
+        }
+
+        .btn-approve{
+            background: rgba(34,197,94,0.12);
+            border:1px solid var(--success);
+            color: var(--success);
+        }
+
+        .btn-approve:hover{
+            background: var(--success);
+            color:#062b12;
+        }
+
+        .btn-reject{
+            background: transparent;
+            border:1px solid var(--danger);
+            color: var(--danger);
+        }
+
+        .btn-reject:hover{
+            background: var(--danger);
+            color:white;
+        }
+
+        .empty-state{
+            text-align:center;
+            padding:40px;
+            color:var(--muted);
+        }
+
+        .reject-form{
+            display:flex;
+            gap:8px;
+            align-items:center;
+        }
+
+        .reject-form input{
+            background: var(--glass);
+            border:1px solid rgba(255,255,255,0.1);
+            border-radius:8px;
+            padding:8px 10px;
+            color:#fff;
+            font-size:13px;
+            min-width:220px;
+        }
+
+        .reject-form input::placeholder{
+            color: rgba(255,255,255,0.4);
+        }
+    </style>
+</head>
+
+<body>
+
+    <%- include('partials/nav') %>
+
+    <div class="container">
+        <h1>Pending Blogs</h1>
+        <p class="subtitle">Blogs held by Gemini for manual review. Approve to publish, or reject to notify the author.</p>
+
+        <% if (blogs && blogs.length > 0) { %>
+            <% blogs.forEach(function(blog) { %>
+                <div class="blog-card">
+                    <div class="blog-top">
+                        <div>
+                            <div class="blog-title"><a href="/blog/<%= blog._id %>" target="_blank"><%= blog.title %></a></div>
+                            <div class="blog-author">By <%= blog.createdBy ? blog.createdBy.fullName : (blog.authorSnapshot?.name || "Unknown") %> &middot; <%= blog.createdAt.toDateString() %></div>
+                        </div>
+                        <span class="badge">PENDING</span>
+                    </div>
+
+                    <% if (blog.moderation) { %>
+                        <div class="moderation-info">
+                            <span><strong>Label:</strong> <%= blog.moderation.label || "N/A" %></span>
+                            <span><strong>Confidence:</strong> <%= blog.moderation.confidence != null ? blog.moderation.confidence : "N/A" %></span>
+                            <span><strong>Category:</strong> <%= blog.moderation.category || "N/A" %></span>
+                            <% if (blog.moderation.reason) { %>
+                                <span><strong>Reason:</strong> <%= blog.moderation.reason %></span>
+                            <% } %>
+                        </div>
+                    <% } %>
+
+                    <div class="actions">
+                        <form action="/admin/approve-blog/<%= blog._id %>" method="POST">
+                            <button type="submit" class="btn btn-approve">Approve &amp; Publish</button>
+                        </form>
+
+                        <form action="/admin/reject-blog/<%= blog._id %>" method="POST" class="reject-form">
+                            <input type="text" name="reason" placeholder="Reason (optional, emailed to author)">
+                            <button type="submit" class="btn btn-reject">Reject</button>
+                        </form>
+                    </div>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <div class="empty-state">
+                <h3>All caught up!</h3>
+                <p>There are no blogs waiting for review right now.</p>
+            </div>
+        <% } %>
+    </div>
+
+    <%- include('partials/footer') %>
+
+<%- include('partials/scripts') %>
+</body>
+</html>

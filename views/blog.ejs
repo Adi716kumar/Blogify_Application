@@ -310,12 +310,17 @@
 
     <div class="container mt-3">
         <h1>Comments</h1>
-       <% if (locals.comments) { %>
+       <% if (locals.comments && comments.length) { %>
         <% comments.forEach(function(comment) { %>
              <div class="comment-card">
   <div class="comment-header">
     <img src="<%= comment.authorSnapshot.profileImageURL || '/images/default.png' %>" class="comment-img">
     <strong><%= comment.authorSnapshot.name %></strong>
+    <% if (comment.status !== "approved") { %>
+      <span style="font-size:11px; padding:2px 8px; border-radius:999px; background:rgba(234,179,8,0.15); color:#facc15; border:1px solid rgba(234,179,8,0.3);">
+        <%= comment.status === "rejected" ? "rejected" : "awaiting review" %>
+      </span>
+    <% } %>
   </div>
   <p class="comment-text"><%= comment.content %></p>
 </div>
@@ -359,6 +364,8 @@
     <button onclick="closeModal()">Close</button>
   </div>
 </div>
+
+<%- include('partials/footer') %>
 
 <%- include('partials/scripts') %>
 

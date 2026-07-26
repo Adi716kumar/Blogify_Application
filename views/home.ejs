@@ -210,7 +210,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color:var(--muted)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M21 21l-4.35-4.35"/><circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="1.6"/></svg>
                     <input id="search" type="search" placeholder="Search by title, body or author..." autocomplete="off">
                 </div>
-                <a href="/blog/add-new" class="btn-cta" title="Add a new blog">+ Add Blog</a>
+                <a href="/blog/add-blog" class="btn-cta" title="Add a new blog">+ Add Blog</a>
             </div>
         </div>
 
@@ -218,7 +218,7 @@
             <div class="empty-state">
                 <h3 style="margin:0 0 8px; color:#fff;">No blogs yet</h3>
                 <p style="margin:0 0 12px;">Be the first to share—your thoughts could inspire someone.</p>
-                <a href="/blog/add-new" class="btn-cta">Create your first post</a>
+                <a href="/blog/add-blog" class="btn-cta">Create your first post</a>
             </div>
         <% } else { %>
             <div class="grid" id="blogsGrid">
@@ -255,7 +255,9 @@
         <% } %>
     </div>
 
-   <%- include('partials/scripts') %>
+   <%- include('partials/footer') %>
+
+<%- include('partials/scripts') %>
 
    <script>
        // simple client-side filter and reveal-on-scroll
@@ -290,4 +292,4 @@
        })();
    </script>
 </body>
-</html></div>
+</html>

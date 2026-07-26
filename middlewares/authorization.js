@@ -1,7 +1,7 @@
 function isAdmin(req, res, next) {
   // Check if user is logged in
   if (!req.user) {
-    return res.redirect("/login");
+    return res.redirect("/user/signin");
   }
 
   // Check if user is admin

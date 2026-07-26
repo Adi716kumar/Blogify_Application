@@ -37,7 +37,20 @@ const blogSchema  = new Schema({
      summary: {
         type: String,
         default: "",
-     }
+     },
+      // NEW FIELDS
+    status: {
+        type: String,
+        enum: ["pending", "published", "rejected"],
+        default: "pending",
+    },
+    moderation: {
+        label: String,        // SAFE / SPAM / HATE etc.
+        confidence: Number,   // 0 to 1
+        reason: String,
+        category: String,   // history, sports, political
+    },
+    rejectionReason: String,
 },
 {timestamps: true}
 );

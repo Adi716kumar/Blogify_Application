@@ -118,25 +118,25 @@
             <!-- All Blogs -->
             <div class="card" style = "color: rgb(155, 18, 18);" onclick="navigate('/admin/blogs')">
                 <h2>All Blogs</h2>
-                <p>View and manage all blogs</p>
+                <p><%= stats.totalBlogs %> total blogs</p>
             </div>
 
             <!-- All Comments -->
             <div class="card" style = "color: rgb(12, 157, 68);" onclick="navigate('/admin/comments')">
                 <h2>All Comments</h2>
-                <p>Manage user comments</p>
+                <p><%= stats.totalComments %> total comments</p>
             </div>
 
             <!-- Pending Blogs -->
             <div class="card" style = "color: rgb(24, 24, 177);" onclick="navigate('/admin/pending-blogs')">
                 <h2>Pending Blogs</h2>
-                <p>Review pending blogs</p>
+                <p><%= stats.pendingBlogsCount %> awaiting review</p>
             </div>
 
             <!-- Pending Comments -->
             <div class="card" style = "color: rgb(175, 175, 16);" onclick="navigate('/admin/pending-comments')">
                 <h2>Pending Comments</h2>
-                <p>Approve or reject comments</p>
+                <p><%= stats.pendingCommentsCount %> awaiting review</p>
             </div>
 
         </div>
@@ -148,7 +148,9 @@
             window.location.href = path;
         }
     </script>
-    <%- include('partials/scripts') %>
+    <%- include('partials/footer') %>
+
+<%- include('partials/scripts') %>
 
 </body>
 </html>

@@ -98,7 +98,7 @@
                 <div class="blog-card">
                     <div class="blog-info">
                         <div class="blog-title"><%= comment.content %></div>
-                        <div class="blog-author">By <%= comment.createdBy.fullName %></div>
+                        <div class="blog-author">By <%= comment.createdBy ? comment.createdBy.fullName : (comment.authorSnapshot?.name || "Deleted user") %></div>
                     </div>
 
                     <form action="/admin/delete-comment/<%= comment._id %>" method="POST">
@@ -117,6 +117,8 @@
             window.location.href = path;
         }
     </script>
-    <%- include('partials/scripts') %>
+    <%- include('partials/footer') %>
+
+<%- include('partials/scripts') %>
 </body>
 </html>

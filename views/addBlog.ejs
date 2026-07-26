@@ -142,6 +142,12 @@
         </div>
       <% } %>
 
+      <% if (typeof error !== 'undefined' && error) { %>
+        <script>
+          alert("<%= error %>");
+        </script>
+      <% } %>
+
       <form action="/blog/create-blog" method="post" enctype="multipart/form-data">
 
         <div style="margin-bottom:18px;">
@@ -158,19 +164,27 @@
           <label>Body</label>
           <textarea name="body" required></textarea>
         </div>
-
-        <div class="actions">
-          <button
-            class="btn-submit"
-            <% if(!locals.user) { %> disabled <% } %>>
+      <div class="actions">
+        <button
+          type="submit"
+          class="btn-submit"
+          <% if (!locals.user) { %> disabled <% } %>
+          onclick="this.disabled=true; this.innerText='Publishing...'; this.form.submit();"
+        >
+          <% if (!locals.user) { %>
+            Login to Publish
+          <% } else { %>
             Publish Blog
-          </button>
-        </div>
+          <% } %>
+        </button>
+      </div>
 
       </form>
     </div>
   </div>
 
-  <%- include('partials/scripts') %>
+  <%- include('partials/footer') %>
+
+<%- include('partials/scripts') %>
 </body>
 </html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head') %>
+    <meta charset="UTF-8">
+    <title>Pending Comments - Admin</title>
+
+    <style>
+        :root{
+            --bg1: #0f172a;
+            --bg2: #0b1220;
+            --accent2: #06b6d4;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --glass: rgba(255,255,255,0.06);
+            --muted: rgba(255,255,255,0.7);
+        }
+
+        body{
+            background: linear-gradient(135deg,var(--bg1), var(--bg2));
+            color: #eef2ff;
+            font-family: Inter, sans-serif;
+            margin:0;
+        }
+
+        .container{
+            width:80%;
+            margin:40px auto;
+        }
+
+        h1{ margin-bottom:8px; }
+
+        .subtitle{
+            color:var(--muted);
+            margin-bottom:30px;
+            font-size:14px;
+        }
+
+        .comment-card{
+            background: rgba(255,255,255,0.03);
+            padding:18px 22px;
+            border-radius:12px;
+            margin-bottom:16px;
+            border:1px solid rgba(255,255,255,0.05);
+        }
+
+        .comment-meta{
+            font-size:13px;
+            color:var(--muted);
+            margin-bottom:8px;
+        }
+
+        .comment-meta a{
+            color: var(--accent2);
+            text-decoration:none;
+        }
+
+        .comment-content{
+            font-size:15px;
+            margin-bottom:14px;
+        }
+
+        .actions{
+            display:flex;
+            gap:10px;
+        }
+
+        .btn{
+            border:none;
+            padding:8px 16px;
+            border-radius:8px;
+            cursor:pointer;
+            font-weight:600;
+            font-size:13px;
+        }
+
+        .btn-approve{
+            background: rgba(34,197,94,0.12);
+            border:1px solid var(--success);
+            color: var(--success);
+        }
+
+        .btn-approve:hover{ background: var(--success); color:#062b12; }
+
+        .btn-reject{
+            background: transparent;
+            border:1px solid var(--danger);
+            color: var(--danger);
+        }
+
+        .btn-reject:hover{ background: var(--danger); color:white; }
+
+        .empty-state{
+            text-align:center;
+            padding:40px;
+            color:var(--muted);
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('partials/nav') %>
+
+    <div class="container">
+        <h1>Pending Comments</h1>
+        <p class="subtitle">Comments held by Gemini for manual review. Approve to show them publicly, or reject to hide them.</p>
+
+        <% if (comments && comments.length > 0) { %>
+            <% comments.forEach(function(comment) { %>
+                <div class="comment-card">
+                    <div class="comment-meta">
+                        By <%= comment.createdBy ? comment.createdBy.fullName : (comment.authorSnapshot?.name || "Unknown") %>
+                        on <a href="/blog/<%= comment.blogId?._id %>" target="_blank"><%= comment.blogId?.title || "a blog" %></a>
+                    </div>
+                    <div class="comment-content"><%= comment.content %></div>
+                    <% if (comment.moderation) { %>
+                        <div style="font-size:12px; color:var(--muted); margin-bottom:12px;">
+                            <strong>Label:</strong> <%= comment.moderation.label || "N/A" %>
+                            &nbsp;&middot;&nbsp;
+                            <strong>Confidence:</strong> <%= comment.moderation.confidence != null ? comment.moderation.confidence : "N/A" %>
+                            <% if (comment.moderation.reason) { %>
+                                &nbsp;&middot;&nbsp;<strong>Reason:</strong> <%= comment.moderation.reason %>
+                            <% } %>
+                        </div>
+                    <% } %>
+                    <div class="actions">
+                        <form action="/admin/approve-comment/<%= comment._id %>" method="POST">
+                            <button type="submit" class="btn btn-approve">Approve</button>
+                        </form>
+                        <form action="/admin/reject-comment/<%= comment._id %>" method="POST">
+                            <button type="submit" class="btn btn-reject">Reject</button>
+                        </form>
+                        <form action="/admin/delete-comment/<%= comment._id %>" method="POST">
+                            <button type="submit" class="btn btn-reject">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <div class="empty-state">
+                <h3>No pending comments</h3>
+                <p>Nothing waiting for review right now.</p>
+            </div>
+        <% } %>
+    </div>
+
+    <%- include('partials/footer') %>
+
+<%- include('partials/scripts') %>
+</body>
+</html>

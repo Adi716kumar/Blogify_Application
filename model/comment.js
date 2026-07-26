@@ -29,7 +29,18 @@ const commentSchema = new Schema({
             type: String,
             required: true
         }
-        },
+    },
+        status: {
+        type: String,
+        enum: ["pending", "approved", "rejected"],
+        default: "pending",
+    },
+    moderation: {
+        label: String,
+        confidence: Number,
+        reason: String,
+    },
+
 }, {timestamps: true});
 
 const Comment = model("comment", commentSchema);
