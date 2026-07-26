@@ -2,7 +2,7 @@
 
 **Blogify** is a full-stack blogging platform with built-in **AI-powered content moderation** — every blog post and comment is automatically screened by Google Gemini before it ever goes public. Safe content publishes instantly, borderline content is queued for human review, and clearly inappropriate content is rejected with an automated email notice to the author.
 
-**🔗 Live Demo:** [ ]
+**🔗 Live Demo:** [ https://blogify-application-hsh2.onrender.com ]
 
 <!--
 🖼️ Screenshots
